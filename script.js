@@ -89,78 +89,12 @@ function lcmAll() {
     return result;
 }
 
-
-
-function addremove() { //add remove bt-io time pair add event listener
-    let processTimes = [];
-    let table = document.querySelector(".main-table");
-    for (let i = 0; i < process; i++) {
-        let row = table.rows[2 * i + 2].cells;
-        processTimes.push(row.length);
-    }
-    let addbtns = document.querySelectorAll(".add-process-btn");
-    for (let i = 0; i < process; i++) {
-        addbtns[i].onclick = () => {
-            let table = document.querySelector(".main-table");
-            let row1 = table.rows[2 * i + 1];
-            let row2 = table.rows[2 * i + 2];
-            let newcell1 = row1.insertCell(processTimes[i] + 3);
-            newcell1.innerHTML = "IO";
-            newcell1.classList.add("process-time");
-            newcell1.classList.add("io");
-            newcell1.classList.add("process-heading");
-            let newcell2 = row2.insertCell(processTimes[i]);
-            newcell2.innerHTML = '<input type="number" min="1" step="1" value="1">';
-            newcell2.classList.add("process-time");
-            newcell2.classList.add("io");
-            newcell2.classList.add("process-input");
-            let newcell3 = row1.insertCell(processTimes[i] + 4);
-            newcell3.innerHTML = "CPU";
-            newcell3.classList.add("process-time");
-            newcell3.classList.add("cpu");
-            newcell3.classList.add("process-heading");
-            let newcell4 = row2.insertCell(processTimes[i] + 1);
-            newcell4.innerHTML = '<input type="number" min="1" step="1" value="1">';
-            newcell4.classList.add("process-time");
-            newcell4.classList.add("cpu");
-            newcell4.classList.add("process-input");
-            processTimes[i] += 2;
-            // updateColspan();
-            inputOnChange();
-        };
-    }
-    let removebtns = document.querySelectorAll(".remove-process-btn");
-    for (let i = 0; i < process; i++) {
-        removebtns[i].onclick = () => {
-            if (processTimes[i] > 1) {
-                let table = document.querySelector(".main-table");
-                processTimes[i]--;
-                let row1 = table.rows[2 * i + 1];
-                row1.deleteCell(processTimes[i] + 3);
-                let row2 = table.rows[2 * i + 2];
-                row2.deleteCell(processTimes[i]);
-                processTimes[i]--;
-                table = document.querySelector(".main-table");
-                row1 = table.rows[2 * i + 1];
-                row1.deleteCell(processTimes[i] + 3);
-                row2 = table.rows[2 * i + 2];
-                row2.deleteCell(processTimes[i]);
-                // updateColspan();
-            }
-        };
-    }
-}
-addremove();
-
 function addProcess() {
     process++;
     let rowHTML1 = `
                           <td class="process-id" rowspan="2">P${process}</td>
                           <td class="priority hide" rowspan="2"><input type="number" min="1" step="1" value="1"></td>
                           <td class="arrival-time" rowspan="2"><input type="number" min="0" step="1" value="0"> </td>
-                          <td class="process-time cpu process-heading" colspan="">CPU</td>
-                          <td class="process-btn"><button type="button" class="add-process-btn">+</button></td>
-                          <td class="process-btn"><button type="button" class="remove-process-btn">-</button></td>
                       `;
     let rowHTML2 = `
                            <td class="process-time cpu process-input"><input type="number" min="1" step="1" value="1"> </td>
@@ -504,6 +438,21 @@ function showFinalTable(input, output, outputDiv) {
     let tp = document.createElement("p");
     tp.innerHTML = "Throughput : " + process / lastct;
     outputDiv.appendChild(tp);
+    let arr= outputAverageTimes(output);
+    let ct = document.createElement("p");
+    ct.innerHTML = "Average Completion Time : " + arr[0];
+    outputDiv.appendChild(ct);
+    let tat = document.createElement("p");
+    tat.innerHTML = "Average Turn Around Time : " + arr[1];
+    outputDiv.appendChild(tat);
+    let wt = document.createElement("p");
+    wt.innerHTML = "Average Waiting Time : " + arr[2];
+    outputDiv.appendChild(wt);
+    let rt = document.createElement("p");
+    rt.innerHTML = "Average Response Time : " + arr[3];
+    outputDiv.appendChild(rt);
+
+
     if (input.contextSwitch > 0) {
 
         let cs = document.createElement("p");
@@ -698,6 +647,11 @@ function showAlgorithmChart(outputDiv) {
     });
 }
 
+function avgTime(output){
+  const arr= outputAverageTimes(output);
+  
+}
+
 function showOutput(input, output, outputDiv) {
     showGanttChart(output, outputDiv);
     outputDiv.insertAdjacentHTML("beforeend", "<hr>");
@@ -710,6 +664,7 @@ function showOutput(input, output, outputDiv) {
         outputDiv.insertAdjacentHTML("beforeend", "<hr>");
     }
     showAlgorithmChart(outputDiv);
+    avgTime(output);
     
 
 }
