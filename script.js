@@ -299,39 +299,6 @@ function setUtility(input, utility) {
     utility.returnTime = input.arrivalTime.slice();
 }
 
-// function reduceSchedule(schedule) {
-//     let newSchedule = [];
-//     let currentScheduleElement = schedule[0][0];
-//     let currentScheduleLength = schedule[0][1];
-//     for (let i = 1; i < schedule.length; i++) {
-//         if (schedule[i][0] == currentScheduleElement) {
-//             currentScheduleLength += schedule[i][1];
-//         } else {
-//             newSchedule.push([currentScheduleElement, currentScheduleLength]);
-//             currentScheduleElement = schedule[i][0];
-//             currentScheduleLength = schedule[i][1];
-//         }
-//     }
-//     newSchedule.push([currentScheduleElement, currentScheduleLength]);
-//     return newSchedule;
-// }
-
-// function reduceTimeLog(timeLog) {
-//     let timeLogLength = timeLog.length;
-//     let newTimeLog = [],
-//         j = 0;
-//     for (let i = 0; i < timeLogLength - 1; i++) {
-//         if (timeLog[i] != timeLog[i + 1]) {
-//             newTimeLog.push(timeLog[j]);
-//         }
-//         j = i + 1;
-//     }
-//     if (j == timeLogLength - 1) {
-//         newTimeLog.push(timeLog[j]);
-//     }
-//     return newTimeLog;
-// }
-
 function outputAverageTimes(output) {
     let avgct = 0;
     output.completionTime.forEach((element) => {
@@ -362,8 +329,6 @@ function setOutput(input, output) {
         output.turnAroundTime[i] = output.completionTime[i] - input.arrivalTime[i];
         output.waitingTime[i] = output.turnAroundTime[i] - input.totalBurstTime[i];
     }
-    // output.schedule = reduceSchedule(output.schedule);
-    // output.timeLog = reduceTimeLog(output.timeLog);
     output.averageTimes = outputAverageTimes(output);
 }
 
@@ -545,103 +510,6 @@ function showFinalTable(input, output, outputDiv) {
         cs.innerHTML = "Number of Context Switches : " + (output.contextSwitches - 1);
         outputDiv.appendChild(cs);
     }
-}
-
-function toggleTimeLogArrowColor(timeLog, color) {
-    let timeLogMove = ['remain-ready', 'ready-running', 'running-terminate', 'running-ready', 'running-block', 'block-ready'];
-    timeLog.move.forEach(element => {
-        document.getElementById(timeLogMove[element]).style.color = color;
-    });
-}
-
-function nextTimeLog(timeLog) {
-    let timeLogTableDiv = document.getElementById("time-log-table-div");
-
-    let arrowHTML = `
-    <p id = "remain-ready" class = "arrow">&rarr;</p>
-    <p id = "ready-running" class = "arrow">&#10554;</p>
-    <p id = "running-ready" class = "arrow">&#10554;</p>
-    <p id = "running-terminate" class = "arrow">&rarr;</p>
-    <p id = "running-block" class = "arrow">&rarr;</p>
-    <p id = "block-ready" class = "arrow">&rarr;</p>
-    `;
-    timeLogTableDiv.innerHTML = arrowHTML;
-
-    let remainTable = document.createElement("table");
-    remainTable.id = "remain-table";
-    remainTable.className = 'time-log-table';
-    let remainTableHead = remainTable.createTHead();
-    let remainTableHeadRow = remainTableHead.insertRow(0);
-    let remainTableHeading = remainTableHeadRow.insertCell(0);
-    remainTableHeading.innerHTML = "Remain";
-    let remainTableBody = remainTable.createTBody();
-    for (let i = 0; i < timeLog.remain.length; i++) {
-        let remainTableBodyRow = remainTableBody.insertRow(i);
-        let remainTableValue = remainTableBodyRow.insertCell(0);
-        remainTableValue.innerHTML = 'P' + (timeLog.remain[i] + 1);
-    }
-    timeLogTableDiv.appendChild(remainTable);
-
-    let readyTable = document.createElement("table");
-    readyTable.id = "ready-table";
-    readyTable.className = 'time-log-table';
-    let readyTableHead = readyTable.createTHead();
-    let readyTableHeadRow = readyTableHead.insertRow(0);
-    let readyTableHeading = readyTableHeadRow.insertCell(0);
-    readyTableHeading.innerHTML = "Ready";
-    let readyTableBody = readyTable.createTBody();
-    for (let i = 0; i < timeLog.ready.length; i++) {
-        let readyTableBodyRow = readyTableBody.insertRow(i);
-        let readyTableValue = readyTableBodyRow.insertCell(0);
-        readyTableValue.innerHTML = 'P' + (timeLog.ready[i] + 1);
-    }
-    timeLogTableDiv.appendChild(readyTable);
-
-    let runningTable = document.createElement("table");
-    runningTable.id = "running-table";
-    runningTable.className = 'time-log-table';
-    let runningTableHead = runningTable.createTHead();
-    let runningTableHeadRow = runningTableHead.insertRow(0);
-    let runningTableHeading = runningTableHeadRow.insertCell(0);
-    runningTableHeading.innerHTML = "Running";
-    let runningTableBody = runningTable.createTBody();
-    for (let i = 0; i < timeLog.running.length; i++) {
-        let runningTableBodyRow = runningTableBody.insertRow(i);
-        let runningTableValue = runningTableBodyRow.insertCell(0);
-        runningTableValue.innerHTML = 'P' + (timeLog.running[i] + 1);
-    }
-    timeLogTableDiv.appendChild(runningTable);
-
-    let blockTable = document.createElement("table");
-    blockTable.id = "block-table";
-    blockTable.className = 'time-log-table';
-    let blockTableHead = blockTable.createTHead();
-    let blockTableHeadRow = blockTableHead.insertRow(0);
-    let blockTableHeading = blockTableHeadRow.insertCell(0);
-    blockTableHeading.innerHTML = "Block";
-    let blockTableBody = blockTable.createTBody();
-    for (let i = 0; i < timeLog.block.length; i++) {
-        let blockTableBodyRow = blockTableBody.insertRow(i);
-        let blockTableValue = blockTableBodyRow.insertCell(0);
-        blockTableValue.innerHTML = 'P' + (timeLog.block[i] + 1);
-    }
-    timeLogTableDiv.appendChild(blockTable);
-
-    let terminateTable = document.createElement("table");
-    terminateTable.id = "terminate-table";
-    terminateTable.className = 'time-log-table';
-    let terminateTableHead = terminateTable.createTHead();
-    let terminateTableHeadRow = terminateTableHead.insertRow(0);
-    let terminateTableHeading = terminateTableHeadRow.insertCell(0);
-    terminateTableHeading.innerHTML = "Terminate";
-    let terminateTableBody = terminateTable.createTBody();
-    for (let i = 0; i < timeLog.terminate.length; i++) {
-        let terminateTableBodyRow = terminateTableBody.insertRow(i);
-        let terminateTableValue = terminateTableBodyRow.insertCell(0);
-        terminateTableValue.innerHTML = 'P' + (timeLog.terminate[i] + 1);
-    }
-    timeLogTableDiv.appendChild(terminateTable);
-    document.getElementById("time-log-time").innerHTML = "Time : " + timeLog.time;
 }
 
 function showRoundRobinChart(outputDiv) {
