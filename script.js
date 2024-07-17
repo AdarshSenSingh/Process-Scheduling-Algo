@@ -38,32 +38,34 @@ selectedAlgorithm.onchange = () => {
     checkPriorityCell();
 };
 // this function keep track if wrong input will given
-function inputOnChange() { 
+function inputOnChange() {
     let inputs = document.querySelectorAll('input');
     inputs.forEach((input) => {
         if (input.type == 'number') {
             input.onchange = () => {
                 let inputVal = Number(input.value);
                 let isInt = Number.isInteger(inputVal);
-                if (input.parentNode.classList.contains('arrival-time') || input.id == 'context-switch') 
-                {
+                if (input.parentNode.classList.contains('arrival-time') || input.id == 'context-switch') {
                     if (!isInt || (isInt && inputVal < 0)) {
+                        alert("Invalid input");
                         input.value = 0;
                     } else {
                         input.value = inputVal;
                     }
-                } else 
-                {
+                } else {
                     if (!isInt || (isInt && inputVal < 1)) {
+                        alert("Invalid input");
                         input.value = 1;
                     } else {
                         input.value = inputVal;
                     }
                 }
-            }
+            };
         }
     });
 }
+
+
 inputOnChange();
 let process = 1;
 //resize burst time rows size on +/-
